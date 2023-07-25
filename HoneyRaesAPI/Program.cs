@@ -40,7 +40,7 @@ app.MapGet("/hello", () =>
 {
     return "hello";
 });
-
+//dewq
 app.Run();
 
 record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
