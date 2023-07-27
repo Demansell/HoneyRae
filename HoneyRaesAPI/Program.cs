@@ -51,7 +51,7 @@ List<ServiceTicket> ServiceTickets = new List<ServiceTicket>()
     {
         Id=1,
         CustomerId=1,
-        EmployeeId=0,
+        EmployeeId=1,
         Description="Ticket 1",
         Emergency=false,
         DateCompleted=new DateTime()
@@ -60,7 +60,7 @@ List<ServiceTicket> ServiceTickets = new List<ServiceTicket>()
     {
         Id=2,
         CustomerId=2,
-        EmployeeId=0,
+        EmployeeId=2,
         Description="Ticket 2",
         Emergency=false,
         DateCompleted=new DateTime()
@@ -77,8 +77,8 @@ List<ServiceTicket> ServiceTickets = new List<ServiceTicket>()
     new ServiceTicket
     {
         Id=4,
-        CustomerId=1,
-        EmployeeId=2,
+        CustomerId=4,
+        EmployeeId=4,
         Description="Ticket 4",
         Emergency=false,
         DateCompleted=new DateTime(2023,05,31)
@@ -86,8 +86,8 @@ List<ServiceTicket> ServiceTickets = new List<ServiceTicket>()
     new ServiceTicket
     {
         Id=5,
-        CustomerId=2,
-        EmployeeId=3,
+        CustomerId=5,
+        EmployeeId=5,
         Description="Ticket 5",
         Emergency=true,
         DateCompleted=new DateTime(2023,02,14)
@@ -142,7 +142,13 @@ app.MapGet("/servicetickets", () =>
 
 app.MapGet("/servicetickets/{id}", (int id) =>
 {
-    return ServiceTickets.FirstOrDefault(st => st.Id == id);
+    ServiceTicket serviceTicket = ServiceTickets.FirstOrDefault(st => st.Id == id);
+    if (serviceTicket == null)
+    {
+        return Results.NotFound();
+    }
+    serviceTicket.Employee = Employees.FirstOrDefault(e => e.Id == serviceTicket.EmployeeId);
+    return Results.Ok(serviceTicket);
 });
 
 app.MapGet("/employees", () =>
@@ -152,7 +158,13 @@ app.MapGet("/employees", () =>
 
 app.MapGet("/employees/{id}", (int id) =>
 {
-    return Employees.FirstOrDefault(st => st.Id == id);
+    Employee employee = Employees.FirstOrDefault(e => e.Id == id);
+    if (employee == null)
+    {
+        return Results.NotFound();
+    }
+    employee.ServiceTickets = ServiceTickets.Where(st => st.EmployeeId == id).ToList();
+    return Results.Ok(employee);
 });
 
 app.MapGet("/customers", () =>
