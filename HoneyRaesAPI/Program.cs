@@ -1,4 +1,98 @@
+using HoneyRaesAPI.Models;
+
 var builder = WebApplication.CreateBuilder(args);
+
+List<Customer> Customers = new List<Customer>
+{
+    new Customer()
+    {
+        Id = 1,
+        Name = "Customer 1",
+        Address = "456 cusomter way"
+    },
+    new Customer()
+    {
+        Id = 2,
+        Name = "Customer 2",
+        Address = "872 cusomter way"
+    },
+    new Customer()
+    {
+        Id = 3,
+        Name = "Customer 3",
+        Address = "453 cusomter way"
+    }
+
+};
+List<Employee> Employees = new List<Employee>()
+{
+    new Employee
+    {
+        Id = 1,
+        Name = "Employee 1",
+        Specialty = "React"
+    },
+    new Employee
+    {
+        Id = 2,
+        Name = "Employee 2",
+        Specialty = "HTML"
+    },
+    new Employee
+    {
+        Id = 3,
+        Name = "Employee 3",
+        Specialty = "C#"
+    },
+};
+List<ServiceTicket> ServiceTickets = new List<ServiceTicket>()
+{
+    new ServiceTicket
+    {
+        Id=1,
+        CustomerId=1,
+        EmployeeId=0,
+        Description="Ticket 1",
+        Emergency=false,
+        DateCompleted=new DateTime()
+    },
+    new ServiceTicket
+    {
+        Id=2,
+        CustomerId=2,
+        EmployeeId=0,
+        Description="Ticket 2",
+        Emergency=false,
+        DateCompleted=new DateTime()
+    },
+    new ServiceTicket
+    {
+        Id=3,
+        CustomerId=3,
+        EmployeeId=3,
+        Description="Ticket 3",
+        Emergency=true,
+        DateCompleted=new DateTime()
+    },
+    new ServiceTicket
+    {
+        Id=4,
+        CustomerId=1,
+        EmployeeId=2,
+        Description="Ticket 4",
+        Emergency=false,
+        DateCompleted=new DateTime(2023,05,31)
+    },
+    new ServiceTicket
+    {
+        Id=5,
+        CustomerId=2,
+        EmployeeId=3,
+        Description="Ticket 5",
+        Emergency=true,
+        DateCompleted=new DateTime(2023,02,14)
+    }
+};
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -41,6 +135,36 @@ app.MapGet("/hello", () =>
     return "hello";
 });
 //dewq
+app.MapGet("/servicetickets", () =>
+{
+    return ServiceTickets;
+});
+
+app.MapGet("/servicetickets/{id}", (int id) =>
+{
+    return ServiceTickets.FirstOrDefault(st => st.Id == id);
+});
+
+app.MapGet("/employees", () =>
+{
+    return Employees;
+});
+
+app.MapGet("/employees/{id}", (int id) =>
+{
+    return Employees.FirstOrDefault(st => st.Id == id);
+});
+
+app.MapGet("/customers", () =>
+{
+    return Customers;
+});
+
+app.MapGet("/customers/{id}", (int id) =>
+{
+    return Customers.FirstOrDefault(st => st.Id == id);
+});
+
 app.Run();
 
 record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
