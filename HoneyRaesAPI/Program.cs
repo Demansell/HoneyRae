@@ -177,6 +177,14 @@ app.MapGet("/customers/{id}", (int id) =>
     return Customers.FirstOrDefault(st => st.Id == id);
 });
 
+app.MapPost("/servicetickets", (ServiceTicket serviceTicket) =>
+{
+    // creates a new id (When we get to it later, our SQL database will do this for us like JSON Server did!)
+    serviceTicket.Id = ServiceTickets.Max(st => st.Id) + 1;
+    ServiceTickets.Add(serviceTicket);
+    return serviceTicket;
+});
+
 app.Run();
 //as
 record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
