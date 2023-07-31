@@ -142,6 +142,30 @@ app.MapGet("/servicetickets", () =>
 
 app.MapGet("/servicetickets/{id}", (int id) =>
 {
+    foreach (var t in ServiceTickets)
+    {
+        t.Employee = null;
+    }
+    foreach (var e in Employees)
+    {
+        e.ServiceTickets = null;
+    }
+    foreach (var c in Customers)
+    {
+        c.ServiceTickets = null;
+    }
+    ServiceTicket serviceTicket = ServiceTickets.FirstOrDefault(st => st.Id == id);
+    if (serviceTicket == null)
+    {
+        return Results.NotFound();
+    }
+    serviceTicket.Employee = Employees.FirstOrDefault(e => e.Id == serviceTicket.EmployeeId);
+    serviceTicket.Customer = Customers.FirstOrDefault(e => e.Id == serviceTicket.CustomerId);
+    return Results.Ok(serviceTicket);
+});
+
+app.MapGet("/servicetickets/{id}", (int id) =>
+{
     ServiceTicket serviceTicket = ServiceTickets.FirstOrDefault(st => st.Id == id);
     if (serviceTicket == null)
     {
