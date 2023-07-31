@@ -209,6 +209,12 @@ app.MapPost("/servicetickets", (ServiceTicket serviceTicket) =>
     return serviceTicket;
 });
 
+app.MapPost("/servicetickets/{id}/complete", (int id) =>
+{
+    ServiceTicket ticketToComplete = ServiceTickets.FirstOrDefault(st => st.Id == id);
+    ticketToComplete.DateCompleted = DateTime.Now;
+});
+
 app.Run();
 //as
 record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
