@@ -7,9 +7,5 @@ namespace HoneyRaesAPI.Models
         public string Specialty { get; set; }
         public List<ServiceTicket> ServiceTickets { get; set; }
 
-        internal static object FirstOrDefault(Func<object, bool> value)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

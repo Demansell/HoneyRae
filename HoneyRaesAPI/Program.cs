@@ -1,96 +1,96 @@
 using HoneyRaesAPI.Models;
+using System.Reflection.Metadata.Ecma335;
 
 var builder = WebApplication.CreateBuilder(args);
 
-List<Customer> Customers = new List<Customer>
+List<HoneyRaesAPI.Models.Customer> customers = new List<HoneyRaesAPI.Models.Customer>
 {
     new Customer()
     {
         Id = 1,
-        Name = "Customer 1",
-        Address = "456 cusomter way"
+        Name = "Steve",
+        Address = "123 Street Rd",
     },
     new Customer()
     {
         Id = 2,
-        Name = "Customer 2",
-        Address = "872 cusomter way"
+        Name = "Bob",
+        Address = "124 Street Rd",
     },
     new Customer()
     {
         Id = 3,
-        Name = "Customer 3",
-        Address = "453 cusomter way"
+        Name = "Jon",
+        Address = "2586 Windhaven Dr"
     }
-
 };
-List<Employee> Employees = new List<Employee>()
+List<HoneyRaesAPI.Models.Employee> employees = new List<HoneyRaesAPI.Models.Employee>
 {
-    new Employee
+    new Employee()
     {
         Id = 1,
-        Name = "Employee 1",
-        Specialty = "React"
+        Name = "Michael",
+        Specialty = "Debugging"
     },
-    new Employee
+    new Employee()
     {
         Id = 2,
-        Name = "Employee 2",
-        Specialty = "HTML"
+        Name = "Sheryl",
+        Specialty = "Livin'"
     },
-    new Employee
+    new Employee()
     {
-        Id = 3,
-        Name = "Employee 3",
-        Specialty = "C#"
-    },
+        Id= 3,
+        Name = "Rob",
+        Specialty = "Front-End"
+    }
 };
-List<ServiceTicket> ServiceTickets = new List<ServiceTicket>()
+List<HoneyRaesAPI.Models.ServiceTicket> serviceTickets = new List<HoneyRaesAPI.Models.ServiceTicket>
 {
-    new ServiceTicket
+    new ServiceTicket()
     {
-        Id=1,
-        CustomerId=1,
-        EmployeeId=1,
-        Description="Ticket 1",
-        Emergency=false,
-        DateCompleted=new DateTime()
+        Id = 123,
+        CustomerId = 1,
+        EmployeeId = 2,
+        Description = "A problem",
+        Emergency = true,
+        DateCompleted = null,
     },
-    new ServiceTicket
+    new ServiceTicket()
     {
-        Id=2,
-        CustomerId=2,
-        EmployeeId=2,
-        Description="Ticket 2",
-        Emergency=false,
-        DateCompleted=new DateTime()
+        Id = 124,
+        CustomerId = 3,
+        EmployeeId = null,
+        Description = "A serious problem",
+        Emergency = false,
+        DateCompleted = new DateTime(2023, 3, 2),
     },
-    new ServiceTicket
+     new ServiceTicket()
     {
-        Id=3,
-        CustomerId=3,
-        EmployeeId=3,
-        Description="Ticket 3",
-        Emergency=true,
-        DateCompleted=new DateTime()
+        Id = 125,
+        CustomerId = 1,
+        EmployeeId = 2,
+        Description = "Oops",
+        Emergency = true,
+        DateCompleted = new DateTime(2022, 3, 2),
     },
-    new ServiceTicket
+      new ServiceTicket()
     {
-        Id=4,
-        CustomerId=4,
-        EmployeeId=4,
-        Description="Ticket 4",
-        Emergency=false,
-        DateCompleted=new DateTime(2023,05,31)
+        Id = 126,
+        CustomerId = 2,
+        EmployeeId = 2,
+        Description = "Oh no",
+        Emergency = false,
+        DateCompleted = new DateTime(2023, 7, 2),
     },
-    new ServiceTicket
+       new ServiceTicket()
     {
-        Id=5,
-        CustomerId=5,
-        EmployeeId=5,
-        Description="Ticket 5",
-        Emergency=true,
-        DateCompleted=new DateTime(2023,02,14)
+        Id = 127,
+        CustomerId = 2,
+        EmployeeId = 2,
+        Description = "OH NO!",
+        Emergency = true,
+        DateCompleted = new DateTime(2023, 5, 2),
     }
 };
 
@@ -115,109 +115,137 @@ var summaries = new[]
     "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
 };
 
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast")
-.WithOpenApi();
-
-app.MapGet("/hello", () =>
-{
-    return "hello";
-});
-//dewq
 app.MapGet("/servicetickets", () =>
 {
-    return ServiceTickets;
+    return serviceTickets;
 });
 
 app.MapGet("/servicetickets/{id}", (int id) =>
 {
-    foreach (var t in ServiceTickets)
-    {
-        t.Employee = null;
-    }
-    foreach (var e in Employees)
-    {
-        e.ServiceTickets = null;
-    }
-    foreach (var c in Customers)
-    {
-        c.ServiceTickets = null;
-    }
-    ServiceTicket serviceTicket = ServiceTickets.FirstOrDefault(st => st.Id == id);
+    ServiceTicket serviceTicket = serviceTickets.FirstOrDefault(st => st.Id == id);
     if (serviceTicket == null)
     {
         return Results.NotFound();
     }
-    serviceTicket.Employee = Employees.FirstOrDefault(e => e.Id == serviceTicket.EmployeeId);
-    serviceTicket.Customer = Customers.FirstOrDefault(e => e.Id == serviceTicket.CustomerId);
+    serviceTicket.Customer = customers.FirstOrDefault(e => e.Id == serviceTicket.CustomerId);
+    serviceTicket.Employee = employees.FirstOrDefault(e => e.Id == serviceTicket.EmployeeId);
     return Results.Ok(serviceTicket);
 });
 
-app.MapGet("/servicetickets/{id}", (int id) =>
-{
-    ServiceTicket serviceTicket = ServiceTickets.FirstOrDefault(st => st.Id == id);
-    if (serviceTicket == null)
+app.MapGet("/customers/{id}", (int id) => {
+    Customer customer = customers.FirstOrDefault(e => e.Id == id);
+    if (customer == null)
     {
         return Results.NotFound();
     }
-    serviceTicket.Employee = Employees.FirstOrDefault(e => e.Id == serviceTicket.EmployeeId);
-    return Results.Ok(serviceTicket);
-});
-
-app.MapGet("/employees", () =>
-{
-    return Employees;
+    customer.ServiceTickets = serviceTickets.Where(st => st.CustomerId == id).ToList();
+    return Results.Ok(customer);
 });
 
 app.MapGet("/employees/{id}", (int id) =>
 {
-    Employee employee = Employees.FirstOrDefault(e => e.Id == id);
+    Employee employee = employees.FirstOrDefault(e => e.Id == id);
     if (employee == null)
     {
         return Results.NotFound();
     }
-    employee.ServiceTickets = ServiceTickets.Where(st => st.EmployeeId == id).ToList();
+    employee.ServiceTickets = serviceTickets.Where(st => st.EmployeeId == id).ToList();
     return Results.Ok(employee);
-});
-
-app.MapGet("/customers", () =>
-{
-    return Customers;
-});
-
-app.MapGet("/customers/{id}", (int id) =>
-{
-    return Customers.FirstOrDefault(st => st.Id == id);
 });
 
 app.MapPost("/servicetickets", (ServiceTicket serviceTicket) =>
 {
     // creates a new id (When we get to it later, our SQL database will do this for us like JSON Server did!)
-    serviceTicket.Id = ServiceTickets.Max(st => st.Id) + 1;
-    ServiceTickets.Add(serviceTicket);
+    serviceTicket.Id = serviceTickets.Max(st => st.Id) + 1;
+    serviceTickets.Add(serviceTicket);
     return serviceTicket;
+});
+
+app.MapDelete("/servicetickets/{id}", (int id) =>
+{
+    serviceTickets.Remove(serviceTickets.FirstOrDefault(ticket => ticket.Id == id));
+});
+
+app.MapPut("/servicetickets/{id}", (int id, ServiceTicket serviceTicket) =>
+{
+    ServiceTicket ticketToUpdate = serviceTickets.FirstOrDefault(st => st.Id == id);
+    int ticketIndex = serviceTickets.IndexOf(ticketToUpdate);
+    if (ticketToUpdate == null)
+    {
+        return Results.NotFound();
+    }
+    //the id in the request route doesn't match the id from the ticket in the request body. That's a bad request!
+    if (id != serviceTicket.Id)
+    {
+        return Results.BadRequest();
+    }
+    serviceTickets[ticketIndex] = serviceTicket;
+    return Results.Ok();
 });
 
 app.MapPost("/servicetickets/{id}/complete", (int id) =>
 {
-    ServiceTicket ticketToComplete = ServiceTickets.FirstOrDefault(st => st.Id == id);
-    ticketToComplete.DateCompleted = DateTime.Now;
+    ServiceTicket ticketToComplete = serviceTickets.FirstOrDefault(st => st.Id == id);
+    ticketToComplete.DateCompleted = DateTime.Today;
+});
+
+app.MapGet("/servicetickets/emergency", () =>
+{
+    List<ServiceTicket> emergencyTicket = serviceTickets.Where(st => st.Emergency == true && st.DateCompleted == null).ToList();
+    return Results.Ok(emergencyTicket);
+});
+
+app.MapGet("/servicetickets/unassigned", () =>
+{
+    List<ServiceTicket> unassignedTickets = serviceTickets.Where(st => st.EmployeeId == null).ToList();
+    return Results.Ok(unassignedTickets);
+});
+
+app.MapGet("servicetickets/inactive", () =>
+{
+    DateTime oneYearAgo = DateTime.Today.AddYears(-1);
+    List<int> activeCustomerIds = serviceTickets.Where(ticket => ticket.DateCompleted >= oneYearAgo).Select(ticket => ticket.CustomerId).ToList();
+    List<Customer> inactiveCustomers = customers.Where(customer => !activeCustomerIds.Contains(customer.Id)).ToList();
+    return Results.Ok(inactiveCustomers);
+});
+
+app.MapGet("/servicetickets/employee/unassigned", () =>
+{
+    List<Employee> unassignedEmployees = employees.Where(emp => serviceTickets.All(st => st.EmployeeId != emp.Id)).ToList();
+    return Results.Ok(unassignedEmployees);
+});
+
+app.MapGet("/servicetickets/employee/{id}", (int id) => {
+    var employee = employees.FirstOrDefault(e => e.Id == id);
+    if (employee == null)
+    {
+        return Results.NotFound();
+    }
+
+    var employeeCustomers = customers.Where(c => serviceTickets.Any(st => st.CustomerId == c.Id && st.EmployeeId == id));
+    return Results.Ok(employeeCustomers);
+});
+
+app.MapGet("/employeeofthemonth", () =>
+{
+    var lastMonth = DateTime.Now.AddMonths(-1);
+    var employeeOfTheMonth = employees.OrderByDescending(e => serviceTickets.Count(st => st.EmployeeId == e.Id && st.DateCompleted >= lastMonth)).FirstOrDefault();
+    return Results.Ok(employeeOfTheMonth);
+});
+
+app.MapGet("/completedtickets", () =>
+{
+    var completedTickets = serviceTickets.Where(st => st.DateCompleted != null).OrderBy(st => st.DateCompleted);
+    return Results.Ok(completedTickets);
+});
+
+app.MapGet("/prioritizedtickets", () =>
+{
+    var prioritizedTickets = serviceTickets
+        .Where(st => st.DateCompleted == null)
+        .OrderByDescending(st => st.Emergency)
+        .ThenBy(st => st.EmployeeId == 0);
+    return Results.Ok(prioritizedTickets);
 });
 
 app.Run();
-//as
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
